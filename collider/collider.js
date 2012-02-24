@@ -1,35 +1,27 @@
 (function() {
   var axes, createEnemies, drag, dragMove, gameBoard, gameOptions, gameStats, play, player, render, updateBestScore, updateScore;
-
   gameOptions = {
     height: 450,
     width: 700,
     nEnemies: 30
   };
-
   gameStats = {
     score: 0,
     bestScore: 0
   };
-
   axes = {
     x: d3.scale.linear().domain([0, 100]).range([0, gameOptions.width]),
     y: d3.scale.linear().domain([0, 100]).range([0, gameOptions.height])
   };
-
   gameBoard = d3.select('.container').append('svg:svg').attr('width', gameOptions.width).attr('height', gameOptions.height);
-
   updateScore = function() {
     return d3.select('#current-score').text(gameStats.score.toString());
   };
-
   updateBestScore = function() {
     gameStats.bestScore = _.max([gameStats.bestScore, gameStats.score]);
     return d3.select('#best-score').text(gameStats.bestScore.toString());
   };
-
   player = gameBoard.append('svg:circle').attr('class', 'area').attr('cx', gameOptions.width * 0.5).attr('cy', gameOptions.height * 0.5).attr('r', 10);
-
   dragMove = function() {
     var newX, newY;
     newX = parseFloat(player.attr('cx')) + d3.event.dx;
@@ -37,11 +29,8 @@
     player.attr('cx', newX);
     return player.attr('cy', newY);
   };
-
   drag = d3.behavior.drag().on('drag', dragMove);
-
   player.call(drag);
-
   createEnemies = function() {
     return _.range(0, gameOptions.nEnemies).map(function(i) {
       return {
@@ -51,7 +40,6 @@
       };
     });
   };
-
   render = function(enemy_data) {
     var checkCollision, enemies, onCollision, tweenWithCollisionDetection;
     enemies = gameBoard.selectAll('circle.enemy').data(enemy_data, function(d) {
@@ -69,7 +57,9 @@
       xDiff = parseFloat(enemy.attr('cx')) - parseFloat(player.attr('cx'));
       yDiff = parseFloat(enemy.attr('cy')) - parseFloat(player.attr('cy'));
       separation = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-      if (separation < radiusSum) return collidedCallback(enemy);
+      if (separation < radiusSum) {
+        return collidedCallback(enemy);
+      }
     };
     onCollision = function() {
       updateBestScore();
@@ -99,7 +89,6 @@
     };
     return enemies.transition().duration(500).attr('r', 10).transition().duration(2000).tween('custom', tweenWithCollisionDetection);
   };
-
   play = function() {
     var gameTurn, increaseScore;
     gameTurn = function() {
@@ -115,7 +104,5 @@
     setInterval(gameTurn, 2000);
     return setInterval(increaseScore, 50);
   };
-
   play();
-
 }).call(this);

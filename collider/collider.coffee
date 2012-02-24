@@ -3,6 +3,7 @@
 # * we have a player, and some enemies, who move randomly
 # * if the player gets hit, our score is reset
 # * otherwise our score goes up over time
+# * [Play it here](http://latentflip.github.com/LearningD3/collider)
 
 
 # ## Setup the environment
