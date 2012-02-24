@@ -13,6 +13,7 @@ gameOptions =
   height: 450
   width: 700
   nEnemies: 30
+  padding: 20
 
 # Somewhere to dump the score
 gameStats =
@@ -59,43 +60,101 @@ updateBestScore = ->
 
 
 
-
-
-
 # ## The Player
 # The player is a circle that the user can drag around the board with their mouse
 
-# Create a player by appending a circle to the middle of the 
-# gameboard, 
-player = gameBoard.append('svg:circle')
-                    .attr('class', 'area')
-                    .attr('cx', gameOptions.width*0.5)
-                    .attr('cy', gameOptions.height*0.5)
-                    .attr('r', 10)
-                    
-# ### Dragging callback
+# Let's stick everything in a class to keep it clean
+class Player
+  # An svg path, created using [this tool](http://svg-edit.googlecode.com/svn/branches/2.5.1/editor/svg-editor.html) to give our player a teardrop shape
+  path: 'm-7.5,1.62413c0,-5.04095 4.08318,-9.12413 9.12414,-9.12413c5.04096,0 9.70345,5.53145 11.87586,9.12413c-2.02759,2.72372 -6.8349,9.12415 -11.87586,9.12415c-5.04096,0 -9.12414,-4.08318 -9.12414,-9.12415z'
 
-# We want to be able to drag the player, so we need a callback to update
-# the player's position when we drag him
-# 
-# * Get the current x and y positions of the player (cx, cy)
-# * add the delta x and y from the drag event
-#   (the current user event is always available in d3.event, and
-#   since it's a drag event we can get dx and dy attributes)
-# * Update the player's position
-dragMove = ->
-  newX = parseFloat(player.attr('cx')) + d3.event.dx
-  newY = parseFloat(player.attr('cy')) + d3.event.dy
-  player.attr('cx', newX)
-  player.attr('cy', newY)
+  # Some state for the player to maintain
+  fill: '#ff6600'
+  x: 0
+  y: 0
+  angle: 0
+  r: 5
 
+  # We need the gameOptions hash to restrict his motion
+  constructor: (gameOptions) ->
+    @gameOptions = gameOptions
+  
+  # Render the path to the gameBoard, and moves it to the middle
+  # also initializes dragging on the svg element
+  render: (to) =>
+    @el = to.append('svg:path')
+            .attr('d', @path)
+            .attr('fill', @fill)
+    @transform
+      x: @gameOptions.width * 0.5
+      y: @gameOptions.height * 0.5
 
-# Create the drag behaviour, and attach our `dragMove` callback
-drag = d3.behavior.drag()
-        .on('drag', dragMove)
+    @setupDragging()
+    this
 
-# Attach the drag behaviour to the player
-player.call(drag)
+  # Getters and setters to ensure the player stays within the game
+  # boundary
+  getX: => @x
+  setX: (x) =>
+    minX = @gameOptions.padding
+    maxX = @gameOptions.width - @gameOptions.padding
+    x = minX if x <= minX
+    x = maxX if x >= maxX
+    @x = x
+
+  getY: => @y
+  setY: (y) =>
+    minY = @gameOptions.padding
+    maxY = @gameOptions.height - @gameOptions.padding
+    y = minY if y <= minY
+    y = maxY if y >= maxY
+    @y = y
+
+  # Since the player is an svg:path, we have to move/rotate him
+  # using transform. This method just lets us set any/all of the
+  # attributes and the rest will be taken from his internal state
+  transform: (opts) =>
+    @angle = opts.angle || @angle
+    @setX opts.x || @x
+    @setY opts.y || @y
+
+    @el.attr 'transform',
+      "rotate(#{@angle},#{@getX()},#{@getY()}) "+
+      "translate(#{@getX()},#{@getY()})"
+
+  # Moves the player to an absolute position on the gameboard
+  moveAbsolute: (x,y) =>
+    @transform
+      x:x
+      y:y
+
+  # Moves the player to a relative position, rotating him based
+  # on which direction he is moving
+  moveRelative: (dx,dy) =>
+    @transform
+      x: @getX()+dx
+      y: @getY()+dy
+      angle: 360 * (Math.atan2(dy,dx)/(Math.PI*2))
+
+  # Use d3's behaviors to make the player draggable
+  #
+  # * When he is dragged, move him the amount that the mouse
+  #   moved (available in the global current user event: d3.event)
+  # * Setup dragging using d3's drag behaviour and bind `dragMove`
+  #   to the on 'drag' event
+  # * Apply the drag behaviour to the player's svg element
+  setupDragging: =>
+    dragMove = =>
+      @moveRelative(d3.event.dx, d3.event.dy)
+
+    drag = d3.behavior.drag()
+            .on('drag', dragMove)
+    @el.call(drag)
+
+# Create our player by rendering him to the gameBoard
+players = []
+players.push new Player(gameOptions).render(gameBoard)
+players.push new Player(gameOptions).render(gameBoard)
 
 
 
@@ -116,7 +175,6 @@ createEnemies = ->
 
 
 # ## Rendering the gameboard
-
 render = (enemy_data) ->
   # Select all the enemies on the board
   # and bind the data to them, using the enemies'
@@ -157,16 +215,17 @@ render = (enemy_data) ->
 
   # #### Collision Detection
   # very simple collision detection
-  # find the distance between the centers of an enemy and a player
+  # find the distance between the centers of an enemy and the players
   # and if it's less the sum of their radii, there's been a collision
   # so invoke the callback
   checkCollision = (enemy, collidedCallback) ->
-    radiusSum =  parseFloat(enemy.attr('r')) + parseFloat(player.attr('r'))
-    xDiff = parseFloat(enemy.attr('cx')) - parseFloat(player.attr('cx'))
-    yDiff = parseFloat(enemy.attr('cy')) - parseFloat(player.attr('cy'))
+    _(players).each (player) ->
+      radiusSum =  parseFloat(enemy.attr('r')) + player.r
+      xDiff = parseFloat(enemy.attr('cx')) - player.x
+      yDiff = parseFloat(enemy.attr('cy')) - player.y
 
-    separation = Math.sqrt( Math.pow(xDiff,2) + Math.pow(yDiff,2) )
-    collidedCallback(enemy) if separation < radiusSum
+      separation = Math.sqrt( Math.pow(xDiff,2) + Math.pow(yDiff,2) )
+      collidedCallback(player, enemy) if separation < radiusSum
 
   #If we have a collision, just reset the score
   onCollision = ->
