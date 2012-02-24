@@ -154,7 +154,7 @@ class Player
 # Create our player by rendering him to the gameBoard
 players = []
 players.push new Player(gameOptions).render(gameBoard)
-players.push new Player(gameOptions).render(gameBoard)
+#players.push new Player(gameOptions).render(gameBoard)
 
 
 

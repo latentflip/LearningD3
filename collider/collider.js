@@ -132,8 +132,6 @@
 
   players.push(new Player(gameOptions).render(gameBoard));
 
-  players.push(new Player(gameOptions).render(gameBoard));
-
   createEnemies = function() {
     return _.range(0, gameOptions.nEnemies).map(function(i) {
       return {
