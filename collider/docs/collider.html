@@ -1,0 +1,106 @@
+<!DOCTYPE html>  <html> <head>   <title>collider.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               collider.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nv">createData = </span><span class="o">-&gt;</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nx">_</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">30</span><span class="p">),</span> <span class="nf">(i) -&gt;</span>
+    <span class="p">{</span>
+      <span class="nv">id: </span><span class="nx">i</span>
+      <span class="nv">x: </span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span>
+      <span class="nv">y: </span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span>
+    <span class="p">}</span>
+
+<span class="nv">x = </span><span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">500</span><span class="p">])</span>
+<span class="nv">y = </span><span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">().</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">]).</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">500</span><span class="p">])</span>
+
+<span class="nv">score = </span><span class="mi">0</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nv">vis = </span><span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;svg:svg&#39;</span><span class="p">)</span>
+          <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+          <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="nv">pLayer = </span><span class="nx">vis</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;svg:g&#39;</span><span class="p">)</span>
+
+<span class="nv">dragMove = </span><span class="nf">(args...) -&gt;</span>
+  <span class="nv">px = </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cx&#39;</span><span class="p">))</span>  <span class="o">+</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">dx</span>
+  <span class="nv">py = </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cy&#39;</span><span class="p">))</span> <span class="o">+</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">dy</span>
+  <span class="nx">player</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cx&#39;</span><span class="p">,</span> <span class="nx">px</span><span class="p">)</span>
+  <span class="nx">player</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cy&#39;</span><span class="p">,</span> <span class="nx">py</span><span class="p">)</span>
+
+<span class="nv">drag = </span><span class="nx">d3</span><span class="p">.</span><span class="nx">behavior</span><span class="p">.</span><span class="nx">drag</span><span class="p">()</span>
+        <span class="p">.</span><span class="kc">on</span><span class="p">(</span><span class="s1">&#39;drag&#39;</span><span class="p">,</span> <span class="nx">dragMove</span><span class="p">)</span>
+
+<span class="nv">player = </span><span class="nx">pLayer</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;svg:circle&#39;</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cx&#39;</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cy&#39;</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+              <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">drag</span><span class="p">)</span>
+
+<span class="nv">render = </span><span class="nf">(data, flush) -&gt;</span>
+  <span class="nx">score</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">score</span><span class="p">)</span>
+
+  <span class="nv">series = </span><span class="nx">vis</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">&#39;circle.enemy&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nf">(d) -&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+
+  <span class="nx">series</span><span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;svg:circle&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;enemy&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cx&#39;</span><span class="p">,</span> <span class="nf">(d) -&gt;</span> <span class="nx">x</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">x</span><span class="p">))</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cy&#39;</span><span class="p">,</span> <span class="nf">(d) -&gt;</span> <span class="nx">y</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">y</span><span class="p">))</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>.transition()
+ .duration(1000)
+ .attr('r', 10)</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">xTweenWithCall = </span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">i</span><span class="p">,</span><span class="nx">a</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nf">(t) -&gt;</span>
+      <span class="nv">a = </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+      <span class="nx">a</span> <span class="o">+</span> <span class="p">(</span><span class="nx">x</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span> <span class="o">-</span> <span class="nx">a</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span>
+
+  <span class="nv">yTweenWithCall = </span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">i</span><span class="p">,</span><span class="nx">a</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nf">(t) -&gt;</span>
+      <span class="nv">a = </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+      <span class="nx">a</span> <span class="o">+</span> <span class="p">(</span><span class="nx">y</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">y</span><span class="p">)</span><span class="o">-</span><span class="nx">a</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span>
+
+  <span class="nv">checkCollision = </span><span class="p">(</span><span class="nx">enemy</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nv">parseAttr = </span><span class="nf">(a) -&gt;</span>
+      <span class="p">[</span>
+        <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">enemy</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="nx">a</span><span class="p">))</span>
+        <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="nx">a</span><span class="p">))</span>
+      <span class="p">]</span>
+
+    <span class="nv">r = </span><span class="nx">parseAttr</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="nv">cx = </span><span class="nx">parseAttr</span><span class="p">(</span><span class="s1">&#39;cx&#39;</span><span class="p">)</span>
+    <span class="nv">cy = </span><span class="nx">parseAttr</span><span class="p">(</span><span class="s1">&#39;cy&#39;</span><span class="p">)</span>
+
+    <span class="nv">seperation = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span>
+      <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">cx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">cx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">cy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">cy</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+      <span class="mf">0.5</span>
+    <span class="p">)</span>
+    <span class="nv">collisionSep = </span><span class="nx">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nx">seperation</span> <span class="o">&lt;=</span> <span class="nx">collisionSep</span>
+      <span class="nv">score = </span><span class="mi">0</span>
+
+  <span class="nv">tw = </span><span class="nf">(d) -&gt;</span>
+    <span class="nv">self = </span><span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="err">@</span><span class="p">)</span>
+    <span class="nv">start = </span><span class="p">[</span>
+      <span class="nb">parseFloat</span> <span class="nx">self</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cx&#39;</span><span class="p">)</span>
+      <span class="nb">parseFloat</span> <span class="nx">self</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cy&#39;</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="nf">(t) -&gt;</span>
+      <span class="nx">checkCollision</span><span class="p">(</span><span class="nx">self</span><span class="p">)</span>
+      <span class="nv">newX = </span><span class="nx">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="nx">x</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span><span class="o">-</span><span class="nx">start</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="nx">t</span>
+      <span class="nv">newY = </span><span class="nx">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="nx">y</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">y</span><span class="p">)</span><span class="o">-</span><span class="nx">start</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="nx">t</span>
+      <span class="nx">self</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cx&#39;</span><span class="p">,</span> <span class="nx">newX</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;cy&#39;</span><span class="p">,</span> <span class="nx">newY</span><span class="p">)</span>
+
+  <span class="nx">series</span><span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">tween</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="nx">tw</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>.attrTween('cx', xTweenWithCall)
+.attrTween('cy', yTweenWithCall)
+.attr('cx', (d) -> x(d.x))
+.attr('cy', (d) -> y(d.y))</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">series</span><span class="p">.</span><span class="nx">exit</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">remove</span><span class="p">()</span>
+
+<span class="nx">setInterval</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="nx">render</span> <span class="nx">createData</span><span class="p">()),</span> <span class="mi">2000</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
