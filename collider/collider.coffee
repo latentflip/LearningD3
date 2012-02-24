@@ -9,8 +9,8 @@
 
 # Some basic parameters for our game
 gameOptions =
-  height: 500
-  width: 500
+  height: 450
+  width: 700
   nEnemies: 30
 
 # Somewhere to dump the score
@@ -33,10 +33,10 @@ axes =
 
 # This looks like jQuery, and it is.
 #
-# * find the body element in the DOM
+# * find the container element in the DOM
 # * append an svg element to it
 # * and set some attributes on the element
-gameBoard = d3.select('body').append('svg:svg')
+gameBoard = d3.select('.container').append('svg:svg')
                 .attr('width', gameOptions.width)
                 .attr('height', gameOptions.height)
 
@@ -163,7 +163,6 @@ render = (enemy_data) ->
     radiusSum =  parseFloat(enemy.attr('r')) + parseFloat(player.attr('r'))
     xDiff = parseFloat(enemy.attr('cx')) - parseFloat(player.attr('cx'))
     yDiff = parseFloat(enemy.attr('cy')) - parseFloat(player.attr('cy'))
-    console.log radiusSum
 
     separation = Math.sqrt( Math.pow(xDiff,2) + Math.pow(yDiff,2) )
     collidedCallback(enemy) if separation < radiusSum

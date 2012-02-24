@@ -2,14 +2,40 @@
 <html>
   <head>
     <title>Collider</title>
+    <link href='bootstrap.css' rel='stylesheet'\>
 
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.1/underscore-min.js"></script>
 
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/2.7.4/d3.min.js"></script>
     <style type="text/css">
-
       body {
-        font: 10px sans-serif;
+        background: url(bo_play.png);
+      }
+
+      .container {
+        position: relative;
+        box-shadow: 0px 0px 10px rgba(0,0,0,1);
+        width: 700px;
+      }
+
+      #scores {
+        padding: 10px;
+        position: absolute;
+        top: 40px;
+        right: 40px;
+        background: #ddd;
+        text-align: right;
+        border-radius: 3px;
+      }
+      #scores span {
+        display: inline-block;
+        width: 50px;
+      }
+      .container {
+        background: white;
+        padding: 40px;
+        margin-top: 40px;
+        margin-bottom: 40px;
       }
 
       .rule line {
@@ -38,11 +64,15 @@
     </style>
   </head>
   <body>
-    <h1>Collider</h1>
-    <p>Protect your guy by making sure he doesn't get hit by the enemies</p>
-    <a href='docs/collider.html'>Read the source code/docs</a>
-    <h3>High Score: <span id='best-score'></h3>
-    <h3>Current Score: <span id='current-score'></h3>
+    <div class='container'>
+      <h1>Collider</h1>
+      <h3><a href='docs/collider.html'>Read the source code/docs</a></h3>
+      
+      <div id='scores'>
+        <h3>High Score: <span id='best-score'></h3>
+        <h3>Current Score: <span id='current-score'></h3>
+      </div>
+    </div>
     <script src="collider.js"></script>
   </body>
 </html>

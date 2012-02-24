@@ -2,8 +2,8 @@
   var axes, createEnemies, drag, dragMove, gameBoard, gameOptions, gameStats, play, player, render, updateBestScore, updateScore;
 
   gameOptions = {
-    height: 500,
-    width: 500,
+    height: 450,
+    width: 700,
     nEnemies: 30
   };
 
@@ -17,7 +17,7 @@
     y: d3.scale.linear().domain([0, 100]).range([0, gameOptions.height])
   };
 
-  gameBoard = d3.select('body').append('svg:svg').attr('width', gameOptions.width).attr('height', gameOptions.height);
+  gameBoard = d3.select('.container').append('svg:svg').attr('width', gameOptions.width).attr('height', gameOptions.height);
 
   updateScore = function() {
     return d3.select('#current-score').text(gameStats.score.toString());
@@ -68,7 +68,6 @@
       radiusSum = parseFloat(enemy.attr('r')) + parseFloat(player.attr('r'));
       xDiff = parseFloat(enemy.attr('cx')) - parseFloat(player.attr('cx'));
       yDiff = parseFloat(enemy.attr('cy')) - parseFloat(player.attr('cy'));
-      console.log(radiusSum);
       separation = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
       if (separation < radiusSum) return collidedCallback(enemy);
     };
