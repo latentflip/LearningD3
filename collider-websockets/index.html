@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Collider</title>
+    <link href='bootstrap.css' rel='stylesheet'\>
+
+    <script type="text/javascript" src="underscore.js"></script>
+
+    <script type="text/javascript" src="d3.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style type="text/css">
+      body {
+        background: url(bo_play.png);
+      }
+
+      .container {
+        position: relative;
+        box-shadow: 0px 0px 10px rgba(0,0,0,1);
+        width: 700px;
+      }
+
+      #scores {
+        padding: 10px;
+        position: absolute;
+        top: 40px;
+        right: 40px;
+        background: #ddd;
+        text-align: right;
+        border-radius: 3px;
+      }
+      #scores span {
+        display: inline-block;
+        width: 50px;
+      }
+      .container {
+        background: white;
+        padding: 40px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+      }
+
+      .rule line {
+        stroke: #eee;
+        shape-rendering: crispEdges;
+      }
+
+      .rule line.axis {
+        stroke: #000;
+      }
+
+      .area {
+        fill: lightsteelblue;
+      }
+
+      .line, circle.area {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+      }
+
+      circle.area {
+        fill: #fff;
+      }
+
+    </style>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-29474408-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </head>
+  <body>
+    <div class='container'>
+      <h1>Collider</h1>
+      <h3>Don't get hit!</h3>
+      <h3><a href='docs/collider.html'>Read the source code/docs</a></h3>
+      
+      <div id='scores'>
+        <h3>High Score: <span id='best-score'></h3>
+        <h3>Current Score: <span id='current-score'></h3>
+      </div>
+    </div>
+    <script src="collider.js"></script>
+  </body>
+</html>
+
